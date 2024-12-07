@@ -82,19 +82,19 @@ int main(){
             colIndex = getColorIndex(squashedCol, colorPalette);
             if(pixelIndex == 8){
                 printf("compute\n");
-                char tab[8] ={0,0,6,0,7,6,7,5};
-                writeColRow(tab, binFile);
+                writeTwoBitsRow(tile[rowIndex], binFile);
                 pixelIndex = 0;
+                rowIndex++;
             }
-
+            
             if(colIndex == -1){
                 //write cur
                 colorPalette[cur] = squashedCol;
-                colorRow[][pixelIndex] = cur;
+                tile[rowIndex][pixelIndex] = cur;
                 cur++;
             }else{
                 //write colIndex;
-                colorRow[][pixelIndex] = colIndex;
+                tile[rowIndex][pixelIndex] = colIndex;
             }
             pixelIndex++;
         }
