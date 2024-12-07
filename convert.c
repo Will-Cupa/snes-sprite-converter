@@ -29,8 +29,7 @@ char getColorIndex(uint16_t color, uint16_t* palette){
     return -1;
 }
 
-void writeTwoBitsRow(char* row, FILE* file){
-    char mask = 1; //first bit at 1, others at 0
+void writeTwoBits(char* row, FILE* file, char mask){
     char output;
     for(int j = 0; j<2; j++){
         output = 0;
@@ -82,11 +81,11 @@ int main(){
             colIndex = getColorIndex(squashedCol, colorPalette);
             if(pixelIndex == 8){
                 printf("compute\n");
-                writeTwoBitsRow(tile[rowIndex], binFile);
+                writeTwoBits(tile[rowIndex], binFile,1); //mask at 1 (0001)
                 pixelIndex = 0;
                 rowIndex++;
             }
-            
+
             if(colIndex == -1){
                 //write cur
                 colorPalette[cur] = squashedCol;
@@ -100,6 +99,10 @@ int main(){
         }
         colCode[i] = (atoi(line)>>3)<<3;
         i++;
+    }
+
+    for(int i = 0; i<8; i++){
+        writeTwoBits(tile[i], binFile, 4); //mask at 4 (0100)
     }
 
     fclose(spriteFile);
