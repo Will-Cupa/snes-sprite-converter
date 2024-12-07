@@ -35,8 +35,8 @@ void writeTwoBits(char* row, FILE* file, char mask){
         output = 0;
         for(int i = 0; i<8; i++){
             output = output | ((row[i] & mask)<< 7 -i -j); //start at the end of the byte and shift cursor to 1 bit each time
-            printf("%d ",i);
-            printBits(sizeof(output), &output);
+            // printf("%d ",i); debug
+            // printBits(sizeof(output), &output); debug
         }
         fwrite(&output,sizeof(output),1,file);
         mask<<=1;
@@ -46,7 +46,7 @@ void writeTwoBits(char* row, FILE* file, char mask){
 int main(){
     FILE *spriteFile, *binFile;
     // Open a file in read mode
-    spriteFile = fopen("test.ppm", "r");
+    spriteFile = fopen("sprite-lulu-01.ppm", "r");
 
     // Open a file in write mode
     binFile = fopen("output.bin", "wb"); 
@@ -73,14 +73,15 @@ int main(){
     for(int j = 0; j<PALETTE_SIZE; j++){
         colorPalette[j] = 0x8000;
     }
-
-    while(fgets(line, LINE_LENGTH, spriteFile)||i>2||pixelIndex==8){
+    int debug = 0;
+    while(fgets(line, LINE_LENGTH, spriteFile)){
+        printf("%d\n", debug);
         if(i>2){
             uint16_t squashedCol = colCode[0]<<7|colCode[1]<<2|colCode[2]>>3;
             i = 0; 
             colIndex = getColorIndex(squashedCol, colorPalette);
             if(pixelIndex == 8){
-                printf("compute\n");
+                // printf("compute\n");
                 writeTwoBits(tile[rowIndex], binFile,1); //mask at 1 (0001)
                 pixelIndex = 0;
                 rowIndex++;
@@ -99,11 +100,12 @@ int main(){
         }
         colCode[i] = (atoi(line)>>3)<<3;
         i++;
+        debug++;
     }
 
-    for(int i = 0; i<8; i++){
-        writeTwoBits(tile[i], binFile, 4); //mask at 4 (0100)
-    }
+    // for(int i = 0; i<8; i++){
+    //     writeTwoBits(tile[i], binFile, 4); //mask at 4 (0100)
+    // }
 
     fclose(spriteFile);
     fclose(binFile);
