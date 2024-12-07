@@ -75,7 +75,7 @@ int main(){
     }
     int debug = 0;
     while(fgets(line, LINE_LENGTH, spriteFile)){
-        printf("%d\n", debug);
+        printf("%s", line);
         if(i>2){
             uint16_t squashedCol = colCode[0]<<7|colCode[1]<<2|colCode[2]>>3;
             i = 0; 
