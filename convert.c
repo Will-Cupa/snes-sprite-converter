@@ -10,7 +10,7 @@ void printBits(size_t const size, void const * const ptr)
     unsigned char *b = (unsigned char*) ptr;
     unsigned char byte;
     int i, j;
-    
+
     for (i = size-1; i >= 0; i--) {
         for (j = 7; j >= 0; j--) {
             byte = (b[i] >> j) & 1;
@@ -35,9 +35,8 @@ void writeTwoBits(char* row, FILE* file, char mask){
         output = 0;
         for(int i = 0; i<8; i++){
             output = output | ((row[i] & mask)<< 7 -i -j); //start at the end of the byte and shift cursor to 1 bit each time
-            // printf("%d ",i); debug
-            // printBits(sizeof(output), &output); debug
         }
+        printBits(sizeof(output), &output);
         fwrite(&output,sizeof(output),1,file);
         mask<<=1;
     }
@@ -46,66 +45,77 @@ void writeTwoBits(char* row, FILE* file, char mask){
 int main(){
     FILE *spriteFile, *binFile;
     // Open a file in read mode
-    spriteFile = fopen("sprite.ppm", "r");
+    spriteFile = fopen("sprite-lulu-01RAW.ppm", "r");
 
     // Open a file in write mode
-    binFile = fopen("output.bin", "wb"); 
+    binFile = fopen("output.bin", "wb");
 
     if(spriteFile == NULL){
         printf("Impossible d'ouvrir ce fichier\n");
-        exit(0);
+        exit(-1);
     }
 
     char line[LINE_LENGTH];
-    
+
     while(fgets(line, LINE_LENGTH, spriteFile)&& strcmp("255\n",line) != 0);
 
     int i = 0;
+    int rdVal; //buffer for reading value from file
     int pixelIndex = 0;
     int rowIndex = 0;
-    
+
     char cur = 0;
-    char colIndex;
+    char colorIndex;
     uint8_t colCode[3];
     uint16_t colorPalette[PALETTE_SIZE];
     char tile[8][8];
 
     for(int j = 0; j<PALETTE_SIZE; j++){
-        colorPalette[j] = 0x8000;
+        colorPalette[j] = 0x8000; // Initialize with zero
     }
-    int debug = 0;
-    while(fgets(line, LINE_LENGTH, spriteFile)){
-        printf("%s", line);
-        if(i>2){
-            uint16_t squashedCol = colCode[0]<<7|colCode[1]<<2|colCode[2]>>3;
-            i = 0; 
-            colIndex = getColorIndex(squashedCol, colorPalette);
-            if(pixelIndex == 8){
-                // printf("compute\n");
-                writeTwoBits(tile[rowIndex], binFile,1); //mask at 1 (0001)
-                pixelIndex = 0;
-                rowIndex++;
-            }
 
-            if(colIndex == -1){
+    while((rdVal = fgetc(spriteFile)) != EOF){
+        colCode[i] = rdVal;
+        i++;
+        if(i>=3){
+            printf("%d %d %d\n",colCode[0],colCode[1],colCode[2]);
+            uint16_t squashedCol = colCode[0]<<10|colCode[1]<<5|colCode[2];
+            i = 0;
+
+            colorIndex = getColorIndex(squashedCol, colorPalette);
+
+            if(colorIndex == -1){
                 //write cur
-                colorPalette[cur] = squashedCol;
-                tile[rowIndex][pixelIndex] = cur;
-                cur++;
+                if (cur < PALETTE_SIZE){
+                    colorPalette[cur] = squashedCol;
+                    tile[rowIndex][pixelIndex] = cur;
+                    cur++;
+                }else{
+                    printf("erreur : plus de 8 couleurs");
+                    exit(-1);
+                }
             }else{
                 //write colIndex;
-                tile[rowIndex][pixelIndex] = colIndex;
+                tile[rowIndex][pixelIndex] = colorIndex;
             }
-            pixelIndex++;
-        }
-        colCode[i] = (atoi(line)>>3)<<3;
-        i++;
-        debug++;
-    }
 
-    // for(int i = 0; i<8; i++){
-    //     writeTwoBits(tile[i], binFile, 4); //mask at 4 (0100)
-    // }
+            pixelIndex++;
+
+            if(pixelIndex > 7){
+                writeTwoBits(tile[rowIndex], binFile,1); //mask at 1 (0001)
+                pixelIndex = 0;
+                printf("%d\n",rowIndex);
+                if(rowIndex >= 7){
+                    for(int i = 0; i<8; i++){
+                        writeTwoBits(tile[i], binFile, 4); //mask at 4 (0100)
+                    }
+                    rowIndex = 0;
+                }else{
+                    rowIndex++;
+                }
+            }
+        }
+    }
 
     fclose(spriteFile);
     fclose(binFile);
