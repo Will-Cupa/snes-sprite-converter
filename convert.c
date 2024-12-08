@@ -36,7 +36,7 @@ void writeTwoBits(char *row, FILE *file, char mask){
         for(int i = 0; i<8; i++){
             output = output | ((row[i] & mask)<< 7 -i -j); //start at the end of the byte and shift cursor to 1 bit each time
         }
-        printBits(sizeof(output), &output);
+        // printBits(sizeof(output), &output);
         fwrite(&output,sizeof(output),1,file);
         mask<<=1;
     }
@@ -104,8 +104,8 @@ int main(){
         colCode[i] = rdVal;
         i++;
         if(i>=3){
-            printf("%d %d %d\n",colCode[0],colCode[1],colCode[2]);
-            uint16_t squashedCol = colCode[0]<<10|colCode[1]<<5|colCode[2];
+            // printf("%d %d %d\n",colCode[2],colCode[1],colCode[0]);
+            uint16_t squashedCol = colCode[2]<<10|colCode[1]<<5|colCode[0];
             i = 0;
 
             colorIndex = getColorIndex(squashedCol, colorPalette);
@@ -130,7 +130,7 @@ int main(){
             if(pixelIndex > 7){
                 writeTwoBits(tile[rowIndex], binFile,1); //mask at 1 (0001)
                 pixelIndex = 0;
-                printf("%d\n",rowIndex);
+                // printf("%d\n",rowIndex);
                 if(rowIndex >= 7){
                     for(int i = 0; i<8; i++){
                         writeTwoBits(tile[i], binFile, 4); //mask at 4 (0100)
