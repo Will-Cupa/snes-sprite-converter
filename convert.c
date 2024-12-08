@@ -47,13 +47,34 @@ void writePalette(uint16_t *palette, FILE *file){
     fwrite(palette,sizeof(uint16_t), sizeof(palette),file);
 }
 
+void concat(char* s1, char* s2, char* ns) {
+    ns[0] = '\0';
+    strcpy(ns, s1);
+    strcat(ns, s2);
+}
+
+
 int main(){
     FILE *spriteFile, *binFile, *paletteFile;
-    // Open a file in read mode
-    spriteFile = fopen("sprite-lulu-01RAW.ppm", "r");
+
+    char inputName[20], filename[25], outputName[25], paletteName[25];
+    
+    //input from user
+    printf("nom du fichier : (max 19 caractères): ");
+    if (scanf("%19s", inputName) != 1) { // Ensure input is within bounds
+        fprintf(stderr, "Erreur, saisie invalide\n");
+        return 1;
+    }
+    
+    concat(inputName,".ppm", filename);     // Name of the file to read
+    concat(inputName,".bin", outputName);   // Name of the output file
+    concat(inputName,".pal", paletteName);  // Name of the palette file
+    
+    // Open file in read mode
+    spriteFile = fopen(filename, "r");
 
     // Open a file in write mode
-    binFile = fopen("output.bin", "wb");
+    binFile = fopen(outputName, "wb");
 
     if(spriteFile == NULL){
         printf("Impossible d'ouvrir ce fichier\n");
@@ -125,7 +146,7 @@ int main(){
     fclose(spriteFile);
     fclose(binFile);
 
-    paletteFile = fopen("palette.bin","wb");
+    paletteFile = fopen(paletteName,"wb");
     writePalette(colorPalette, paletteFile);
 
     fclose(paletteFile);
