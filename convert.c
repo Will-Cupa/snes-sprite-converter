@@ -29,7 +29,7 @@ char getColorIndex(uint16_t color, uint16_t* palette){
     return -1;
 }
 
-void writeTwoBits(char* row, FILE* file, char mask){
+void writeTwoBits(char *row, FILE *file, char mask){
     char output;
     for(int j = 0; j<2; j++){
         output = 0;
@@ -42,8 +42,13 @@ void writeTwoBits(char* row, FILE* file, char mask){
     }
 }
 
+void writePalette(uint16_t *palette, FILE *file){
+    //write the palette to the specified file
+    fwrite(palette,sizeof(uint16_t), sizeof(palette),file);
+}
+
 int main(){
-    FILE *spriteFile, *binFile;
+    FILE *spriteFile, *binFile, *paletteFile;
     // Open a file in read mode
     spriteFile = fopen("sprite-lulu-01RAW.ppm", "r");
 
@@ -119,6 +124,11 @@ int main(){
 
     fclose(spriteFile);
     fclose(binFile);
+
+    paletteFile = fopen("palette.bin","wb");
+    writePalette(colorPalette, paletteFile);
+
+    fclose(paletteFile);
 
     return 0;
 }
