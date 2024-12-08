@@ -3,7 +3,7 @@ Converts any ppm file to a bin file that can be used in snes games
 
 ## manual
 
-## input
+### input
 At first, make sure your image can be divided into tiles of 8 by 8 pixels. this is a necessity for snes to read and display properly.
 Also, to work with this programm, you need to put your tiles in one column, so that it can read it vertically.
 
