@@ -5,3 +5,4 @@ test.ppm
 output.bin
 convert.exe
 convertByChar.c
+sprite.ppm

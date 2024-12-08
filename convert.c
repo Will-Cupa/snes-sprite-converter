@@ -46,7 +46,7 @@ void writeTwoBits(char* row, FILE* file, char mask){
 int main(){
     FILE *spriteFile, *binFile;
     // Open a file in read mode
-    spriteFile = fopen("sprite-lulu-01.ppm", "r");
+    spriteFile = fopen("sprite.ppm", "r");
 
     // Open a file in write mode
     binFile = fopen("output.bin", "wb"); 
