@@ -60,7 +60,7 @@ int main(){
     char inputName[20], filename[25], outputName[25], paletteName[25];
     
     //input from user
-    printf("nom du fichier : (max 19 caractères): ");
+    printf("nom du fichier (max 19 caracteres): ");
     if (scanf("%19s", inputName) != 1) { // Ensure input is within bounds
         fprintf(stderr, "Erreur, saisie invalide\n");
         return 1;
