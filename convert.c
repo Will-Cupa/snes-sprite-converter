@@ -104,7 +104,7 @@ int main(){
         colCode[i] = rdVal>>3;
         i++;
         if(i>=3){
-            // printf("%d %d %d\n",colCode[2],colCode[1],colCode[0]);
+            printf("%d %d %d\n",colCode[2],colCode[1],colCode[0]);
             uint16_t squashedCol = colCode[2]<<10|colCode[1]<<5|colCode[0];
             i = 0;
 
@@ -129,7 +129,7 @@ int main(){
             if(pixelIndex > 7){
                 writeTwoBits(tile[rowIndex], binFile,1); //mask at 1 (0001)
                 pixelIndex = 0;
-                // printf("%d\n",rowIndex);
+                printf("%d\n",rowIndex);
                 if(rowIndex > 7){
                     for(int i = 0; i<8; i++){
                         writeTwoBits(tile[i], binFile, 4); //mask at 4 (0100)
@@ -141,7 +141,7 @@ int main(){
             }
         }
     }if (rdVal == EOF) {
-        printf("End of file reached or error occurred.\n");
+        printf("fin du fichier atteinte\n");
     }
 
     fclose(spriteFile);
