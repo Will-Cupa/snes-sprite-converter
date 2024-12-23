@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-const int LINE_LENGTH = 10, PALETTE_SIZE = 8;
+const int LINE_LENGTH = 10, PALETTE_SIZE = 16;
 
 void printBits(size_t const size, void const * const ptr)
 {
@@ -104,12 +104,12 @@ int main(){
         colCode[i] = rdVal;
         i++;
         if(i>=3){
-            // printf("%d %d %d\n",colCode[2],colCode[1],colCode[0]);
+            printf("%d %d %d\n",colCode[2],colCode[1],colCode[0]);
             uint16_t squashedCol = colCode[2]<<10|colCode[1]<<5|colCode[0];
             i = 0;
 
             colorIndex = getColorIndex(squashedCol, colorPalette);
-
+            printf("%d\n",colorIndex);
             if(colorIndex == -1){
                 //write cur
                 if (cur < PALETTE_SIZE){
@@ -117,7 +117,7 @@ int main(){
                     tile[rowIndex][pixelIndex] = cur;
                     cur++;
                 }else{
-                    printf("erreur : plus de 8 couleurs");
+                    printf("erreur : plus de %d couleurs\n", PALETTE_SIZE);
                     exit(-1);
                 }
             }else{
@@ -131,7 +131,7 @@ int main(){
                 writeTwoBits(tile[rowIndex], binFile,1); //mask at 1 (0001)
                 pixelIndex = 0;
                 // printf("%d\n",rowIndex);
-                if(rowIndex >= 7){
+                if(rowIndex > 7){
                     for(int i = 0; i<8; i++){
                         writeTwoBits(tile[i], binFile, 4); //mask at 4 (0100)
                     }
@@ -146,6 +146,11 @@ int main(){
     fclose(spriteFile);
     fclose(binFile);
 
+    // for(int i = 0; i<PALETTE_SIZE; i++){
+    //     uint16_t p = colorPalette[i];
+    //     printBits(sizeof(p), &p);
+    // }
+    
     paletteFile = fopen(paletteName,"wb");
     writePalette(colorPalette, paletteFile);
 
