@@ -101,15 +101,14 @@ int main(){
     }
 
     while((rdVal = fgetc(spriteFile)) != EOF){
-        colCode[i] = rdVal;
+        colCode[i] = rdVal>>3;
         i++;
         if(i>=3){
-            printf("%d %d %d\n",colCode[2],colCode[1],colCode[0]);
+            // printf("%d %d %d\n",colCode[2],colCode[1],colCode[0]);
             uint16_t squashedCol = colCode[2]<<10|colCode[1]<<5|colCode[0];
             i = 0;
 
             colorIndex = getColorIndex(squashedCol, colorPalette);
-            printf("%d\n",colorIndex);
             if(colorIndex == -1){
                 //write cur
                 if (cur < PALETTE_SIZE){
@@ -141,15 +140,12 @@ int main(){
                 }
             }
         }
+    }if (rdVal == EOF) {
+        printf("End of file reached or error occurred.\n");
     }
 
     fclose(spriteFile);
     fclose(binFile);
-
-    // for(int i = 0; i<PALETTE_SIZE; i++){
-    //     uint16_t p = colorPalette[i];
-    //     printBits(sizeof(p), &p);
-    // }
     
     paletteFile = fopen(paletteName,"wb");
     writePalette(colorPalette, paletteFile);
