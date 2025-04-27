@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <unistd.h>
 
 const int LINE_LENGTH = 10, PALETTE_SIZE = 16;
 
@@ -62,7 +63,8 @@ int main(){
     //input from user
     printf("nom du fichier (max 19 caracteres): ");
     if (scanf("%19s", inputName) != 1) { // Ensure input is within bounds
-        fprintf(stderr, "Erreur, saisie invalide\n");
+        printf("Erreur, saisie invalide\n");
+        system("pause");
         return 1;
     }
     
@@ -71,8 +73,13 @@ int main(){
     concat(inputName,".pal", paletteName);  // Name of the palette file
     
     // Open file in read mode
-    spriteFile = fopen(filename, "r");
 
+    if(!(spriteFile = fopen(filename, "r"))){
+        printf("Erreur, le fichier ne peut pas etre ouvert\n");
+        system("pause");
+        return 1;
+    }
+    
     // Open a file in write mode
     binFile = fopen(outputName, "wb");
 
