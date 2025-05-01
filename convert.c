@@ -117,7 +117,7 @@ int main(){
 
             colorIndex = getColorIndex(squashedCol, colorPalette);
             if(colorIndex == -1){
-                //write cur
+                //add color to palette
                 if (cur < PALETTE_SIZE){
                     colorPalette[cur] = squashedCol;
                     tile[rowIndex][pixelIndex] = cur;
